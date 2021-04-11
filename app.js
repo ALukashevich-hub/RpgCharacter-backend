@@ -1,26 +1,53 @@
 // import dependencies
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
 const mongoose  = require('mongoose');
+const Schema = mongoose.Schema;
 require('dotenv').config();
+const port = process.env.PORT || 3000;
 // define the express app
 const app = express();
 //Middlewares:
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:8080'
+}
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 mongoose.connect(
-    process.env.DB_CONNECTION,
-    { useNewUrlParser: true,
-    useUnifiedTopology: true })
-    //Check to see if database is connected successfully.
-const DB = mongoose.connection
-DB.once('open', () => console.log('connected to database'))
+	process.env.DB_CONNECTION,
+	{ useNewUrlParser: true,
+	useUnifiedTopology: true })
+	//Check to see if database is connected successfully.
+const DB = mongoose.connection;
+DB.once('open', () => console.log('[OK] connected to database'))
 DB.on('error', (error)=> console.error(error))
+
+const userScheme = new Schema({
+	name: String,
+	age: Number
+});
+const User = mongoose.model("User", userScheme);
+const user = new User({
+	name: "Bill",
+	age: 41
+});
+
+// user.save()
+// .then(function(doc){
+//     console.log("Сохранен объект", doc);
+//     mongoose.disconnect();  // отключение от базы данных
+// })
+// .catch(function (err){
+//     console.log(err);
+//     mongoose.disconnect();
+// });
 
 app.get("/", function(request, response){
 
     response.send(process.env.DB_CONNECTION);
 });
 // Start the server with port 3000
-app.listen(3000, () => console.log('server started'));
+app.listen(port, () => console.log(`[OK] server started on port ${port}`));
