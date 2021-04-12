@@ -45,9 +45,14 @@ const user = new User({
 //     mongoose.disconnect();
 // });
 
+
+app.get("/api", function(request, response){
+
+    response.json({dbUrl: process.env.DB_CONNECTION, message: 'Api Works'});
+});
 app.get("/", function(request, response){
 
-    response.send(process.env.DB_CONNECTION);
+    response.send('Hello');
 });
 // Start the server with port 3000
 app.listen(port, () => console.log(`[OK] server started on port ${port}`));
