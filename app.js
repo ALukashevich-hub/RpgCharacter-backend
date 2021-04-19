@@ -1,10 +1,12 @@
 // import dependencies
 const express = require('express');
 const cors = require('cors');
+const routes = require('./routes/index');
 const morgan = require('morgan');
 const mongoose  = require('mongoose');
 const Schema = mongoose.Schema;
 require('dotenv').config();
+
 const port = process.env.PORT || 3000;
 // define the express app
 const app = express();
@@ -16,24 +18,15 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+app.use('/api', routes);
 mongoose.connect(
 	process.env.DB_CONNECTION,
 	{ useNewUrlParser: true,
 	useUnifiedTopology: true })
 	//Check to see if database is connected successfully.
 const DB = mongoose.connection;
-DB.once('open', () => console.log('[OK] connected to database'))
-DB.on('error', (error)=> console.error(error))
-
-const userScheme = new Schema({
-	name: String,
-	age: Number
-});
-const User = mongoose.model("User", userScheme);
-const user = new User({
-	name: "Bill",
-	age: 41
-});
+DB.once('open', () => console.log('[OK] connected to database'));
+DB.on('error', (error)=> console.error(error));
 
 // user.save()
 // .then(function(doc){
@@ -44,7 +37,6 @@ const user = new User({
 //     console.log(err);
 //     mongoose.disconnect();
 // });
-
 
 app.get("/api", function(request, response){
 
