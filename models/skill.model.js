@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
  
 const skillSchema = new Schema({
     name: String,
-    description: String,
+    descriptions: [String],
     value: {
         type: Number,
         min: 0,
